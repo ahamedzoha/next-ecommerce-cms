@@ -15,7 +15,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  useFormField,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -27,7 +26,7 @@ const StoreCreateFormSchema = z.object({
 
 export const StoreModal = () => {
   const [loading, setLoading] = useState(false)
-  const { isOpen, onClose } = useStoreModal()
+  const storeModal = useStoreModal()
 
   const form = useForm<z.infer<typeof StoreCreateFormSchema>>({
     resolver: zodResolver(StoreCreateFormSchema),
@@ -43,6 +42,7 @@ export const StoreModal = () => {
       setLoading(true)
       const response = await axios.post("/api/stores", values)
       toast.success("Store created successfully")
+      window.location.assign(`/${response.data.id}`)
     } catch (error) {
       toast.error("Something went wrong")
       console.log(error)
@@ -54,8 +54,8 @@ export const StoreModal = () => {
     <Modal
       title="Create Store"
       description="Add a new store to manage products and categories"
-      isOpen={isOpen}
-      onClose={onClose}
+      isOpen={storeModal.isOpen}
+      onClose={storeModal.onClose}
     >
       <div className="">
         <div className="space-y-4 py-2 pb-4">
@@ -82,7 +82,7 @@ export const StoreModal = () => {
               <div className="pt-6 space-x-2 flex items-center justify-end w-full">
                 <Button
                   variant={"outline"}
-                  onClick={onClose}
+                  onClick={storeModal.onClose}
                   disabled={loading}
                 >
                   Cancel
