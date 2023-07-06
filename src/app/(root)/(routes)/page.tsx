@@ -14,9 +14,5 @@ export default function SetupPage() {
     }
   }, [onOpen, isOpen])
 
-  return (
-    <main>
-      <p>Root Page</p>
-    </main>
-  )
+  return null
 }
