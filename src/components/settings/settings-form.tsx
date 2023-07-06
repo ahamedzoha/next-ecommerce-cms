@@ -18,6 +18,10 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { toast } from "react-hot-toast"
+import axios from "axios"
+import { useParams, useRouter } from "next/navigation"
+import AlertModal from "../modals/alert-modal"
 
 interface SettingsFormProps {
   initialStoreData: Store
@@ -33,6 +37,9 @@ const SettingsForm: FC<SettingsFormProps> = ({ initialStoreData }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  const params = useParams()
+  const router = useRouter()
+
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialStoreData,
@@ -41,7 +48,16 @@ const SettingsForm: FC<SettingsFormProps> = ({ initialStoreData }) => {
   const onSubmit = async (values: SettingsFormValues) => {
     setLoading(true)
     try {
+      setLoading(true)
+      const response = await axios.patch(
+        `/api/stores/${params.storeId}`,
+        values,
+      )
+      router.refresh()
+      toast.success("Store updated successfully!")
+      console.log(response.data)
     } catch (error) {
+      toast.error("Something went wrong!")
     } finally {
       setLoading(false)
     }
@@ -49,8 +65,30 @@ const SettingsForm: FC<SettingsFormProps> = ({ initialStoreData }) => {
     console.log(values)
   }
 
+  const onDelete = async () => {
+    try {
+      setLoading(true)
+      const response = await axios.delete(`/api/stores/${params.storeId}`)
+      router.refresh()
+      router.push("/")
+      toast.success("Store deleted successfully!")
+      console.log(response.data)
+    } catch (error) {
+      toast.error("Make sure you remove all the products and categories first!")
+    } finally {
+      setLoading(false)
+      setOpen(false)
+    }
+  }
+
   return (
     <>
+      <AlertModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onConfirm={onDelete}
+        loading={loading}
+      />
       <div className="flex items-center justify-between">
         <Heading title="Settings" description="Manage store preferences" />
         <Button
