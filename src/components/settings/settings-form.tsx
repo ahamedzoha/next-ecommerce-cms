@@ -1,14 +1,16 @@
 "use client"
 import { Store } from "@prisma/client"
-import { FC, useState } from "react"
-import Heading from "@/components/ui/heading"
-import { Button } from "@/components/ui/button"
+import { FC, useEffect, useRef, useState } from "react"
 import { Trash } from "lucide-react"
-import { Separator } from "@/components/ui/separator"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useParams, useRouter } from "next/navigation"
+import axios from "axios"
 
+import Heading from "@/components/ui/heading"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 import {
   Form,
   FormControl,
@@ -19,9 +21,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { toast } from "react-hot-toast"
-import axios from "axios"
-import { useParams, useRouter } from "next/navigation"
 import AlertModal from "../modals/alert-modal"
+import ApiAlert from "@/components/ui/api-alert"
+import useOrigin from "@/hooks/use-origin"
 
 interface SettingsFormProps {
   initialStoreData: Store
@@ -39,6 +41,8 @@ const SettingsForm: FC<SettingsFormProps> = ({ initialStoreData }) => {
 
   const params = useParams()
   const router = useRouter()
+  const origin = useOrigin()
+  // let origin = ""
 
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(formSchema),
@@ -134,6 +138,12 @@ const SettingsForm: FC<SettingsFormProps> = ({ initialStoreData }) => {
           </Button>
         </form>
       </Form>
+      <Separator />
+      <ApiAlert
+        title="NEXT_PUBLIC_API_URL"
+        description={`${origin}/api/${params.storeId}`}
+        variant="public"
+      />
     </>
   )
 }
