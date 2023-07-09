@@ -69,7 +69,7 @@ const BillboardForm: FC<BillboardFormProps> = ({ initialBillboardData }) => {
           values,
         )
       } else {
-        await axios.patch(`/api/${params.storeId}/billboards`, values)
+        await axios.post(`/api/${params.storeId}/billboards`, values)
       }
 
       toast.success(toastMessage)
