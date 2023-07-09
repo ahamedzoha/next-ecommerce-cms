@@ -2,6 +2,32 @@ import prismadb from "@/lib/prismadb"
 import { auth } from "@clerk/nextjs"
 import { NextResponse } from "next/server"
 
+// Public
+export async function GET(
+  req: Request,
+  { params: { storeId } }: { params: { storeId: string } },
+) {
+  try {
+    if (!storeId) {
+      return new NextResponse("Missing Store ID", { status: 400 })
+    }
+
+    const billboards = await prismadb.billboard.findMany({
+      where: {
+        storeId,
+      },
+    })
+
+    return new NextResponse(JSON.stringify(billboards), {
+      status: 200,
+    })
+  } catch (error) {
+    console.log(`[BILLBOARD_GET]`, error)
+    return new NextResponse("Internal Server Error", { status: 500 })
+  }
+}
+
+// Private
 export async function POST(
   req: Request,
   { params: { storeId } }: { params: { storeId: string } },
@@ -51,35 +77,6 @@ export async function POST(
     })
   } catch (error) {
     console.log(`[BILLBOARD_POST]`, error)
-    return new NextResponse("Internal Server Error", { status: 500 })
-  }
-}
-
-export async function GET(
-  req: Request,
-  { params: { storeId } }: { params: { storeId: string } },
-) {
-  try {
-    const { userId } = auth()
-    if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 401 })
-    }
-
-    if (!storeId) {
-      return new NextResponse("Missing Store ID", { status: 400 })
-    }
-
-    const billboards = await prismadb.billboard.findMany({
-      where: {
-        storeId,
-      },
-    })
-
-    return new NextResponse(JSON.stringify(billboards), {
-      status: 200,
-    })
-  } catch (error) {
-    console.log(`[BILLBOARD_GET]`, error)
     return new NextResponse("Internal Server Error", { status: 500 })
   }
 }

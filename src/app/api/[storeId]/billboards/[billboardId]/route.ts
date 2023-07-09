@@ -2,6 +2,34 @@ import prismadb from "@/lib/prismadb"
 import { auth } from "@clerk/nextjs"
 import { NextResponse } from "next/server"
 
+// Public
+export async function GET(
+  req: Request,
+  {
+    params: { billboardId },
+  }: { params: { billboardId: string; storeId: string } },
+) {
+  try {
+    if (!billboardId) {
+      return new NextResponse("Missing billboardId", { status: 400 })
+    }
+
+    const billboard = await prismadb.billboard.findUnique({
+      where: {
+        id: billboardId,
+      },
+    })
+
+    return new NextResponse(JSON.stringify(billboard), {
+      status: 201,
+    })
+  } catch (error) {
+    console.log(`[BILLBOARD_GET]`, error)
+    return new NextResponse("Internal Server Error", { status: 500 })
+  }
+}
+
+// Private
 export async function PATCH(
   req: Request,
   {
@@ -60,6 +88,7 @@ export async function PATCH(
   }
 }
 
+// Private
 export async function DELETE(
   req: Request,
   {
