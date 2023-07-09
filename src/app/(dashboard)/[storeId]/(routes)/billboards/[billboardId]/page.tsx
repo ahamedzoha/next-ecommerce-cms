@@ -1,3 +1,4 @@
+import BillboardForm from "@/components/billboards/billboard-form"
 import prismadb from "@/lib/prismadb"
 
 const BillboardPage = async ({
@@ -12,7 +13,13 @@ const BillboardPage = async ({
       id: params.billboardId,
     },
   })
-  return <div>Existing Billboard: {billboard?.label}</div>
+  return (
+    <div className="flex-col ">
+      <div className="flex-1 space-y-4 p-8 pt-6">
+        <BillboardForm initialBillboardData={billboard} />
+      </div>
+    </div>
+  )
 }
 
 export default BillboardPage
