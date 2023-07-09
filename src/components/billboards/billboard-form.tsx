@@ -6,7 +6,7 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams, useRouter } from "next/navigation"
-import axios from "axios"
+import axios, { AxiosProgressEvent } from "axios"
 
 import Heading from "@/components/ui/heading"
 import { Button } from "@/components/ui/button"
@@ -25,7 +25,7 @@ import AlertModal from "../modals/alert-modal"
 import ImageUpload from "../ui/image-upload"
 
 const formSchema = z.object({
-  label: z.string().min(2).max(20),
+  label: z.string().min(2).max(36),
   imageUrl: z.string().url(),
 })
 
@@ -60,6 +60,7 @@ const BillboardForm: FC<BillboardFormProps> = ({ initialBillboardData }) => {
   })
 
   const onSubmit = async (values: BillboardFormValues) => {
+    console.log(values)
     setLoading(true)
     try {
       setLoading(true)
@@ -72,8 +73,9 @@ const BillboardForm: FC<BillboardFormProps> = ({ initialBillboardData }) => {
         await axios.post(`/api/${params.storeId}/billboards`, values)
       }
 
-      toast.success(toastMessage)
       router.refresh()
+      router.push(`/${params.storeId}/billboards/`)
+      toast.success(toastMessage)
     } catch (error) {
       toast.error("Something went wrong!")
     } finally {
@@ -89,8 +91,7 @@ const BillboardForm: FC<BillboardFormProps> = ({ initialBillboardData }) => {
       const response = await axios.delete(
         `/api/${params.storeId}/billboards/${params.billboardId}`,
       )
-      router.refresh()
-      router.push("/")
+      router.push(`/${params.storeId}/billboards`)
       toast.success("Billboard deleted successfully!")
     } catch (error) {
       toast.error(

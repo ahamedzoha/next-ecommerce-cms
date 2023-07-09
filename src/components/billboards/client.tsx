@@ -5,15 +5,22 @@ import Heading from "@/components/ui/heading"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useParams, useRouter } from "next/navigation"
+import { Billboard } from "@prisma/client"
+import { FC } from "react"
+import { DataTable } from "../ui/data-table"
+import Columns from "./columns"
 
-const BillboardClient = () => {
+interface BillboardClientProps {
+  data: Billboard[]
+}
+const BillboardClient: FC<BillboardClientProps> = ({ data }) => {
   const router = useRouter()
   const params = useParams()
   return (
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title="Billboards (0)"
+          title={`Billboards (${data.length})`}
           description="Manage billboards of your store"
         />
         <Button
@@ -23,6 +30,8 @@ const BillboardClient = () => {
           Add New
         </Button>
       </div>
+
+      <DataTable searchKey="label" columns={Columns} data={data} />
 
       <Separator />
     </>
