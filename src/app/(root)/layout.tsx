@@ -13,6 +13,7 @@ export default async function SetupLayout({
     redirect("/sign-in")
   }
 
+  // TODO: Handle error for sleeping DB
   const store = await prismadb.store.findFirst({
     where: {
       userId,
